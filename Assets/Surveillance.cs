@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Surveillance : MonoBehaviour
 {
+    GameObject lens;
     GameObject light;
     [SerializeField] float rotateSpeed = 0.001f;
+    [SerializeField] float turnClamp = 90f;
 
     Vector3 targetVector;
     Vector3 lookVector;
@@ -13,7 +16,8 @@ public class Surveillance : MonoBehaviour
 
     void Start()
     {
-        light = transform.GetChild(0).gameObject;
+        lens = transform.GetChild(0).gameObject;
+        light = lens.transform.GetChild(0).gameObject;
         light.SetActive(false);
         startingDirectionVector = transform.forward;
     }
@@ -41,13 +45,40 @@ public class Surveillance : MonoBehaviour
 
     void LookAtTarget()
     {
-        Quaternion rotation = Quaternion.LookRotation(lookVector);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotateSpeed);
+        //Quaternion rotation = Quaternion.LookRotation(lookVector);
+        //transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotateSpeed);
+
+        float lookAngle = Vector3.SignedAngle(startingDirectionVector, targetVector, Vector3.up);
+
+        //lens.transform.RotateAround(Vector3.up, lookAngle);
+        //lens.transform = Quaternion.Euler(lens.transform.rotation.x, lookVector.y, lens.transform.rotation.z);
+
+
+        //float looktAngle = Vector3.Angle(startingDirectionVector, lookVector);
+
+        //Debug.Log("!!! " + looktAngle);
+
+        //if (looktAngle < -turnClamp || looktAngle > turnClamp)
+        //{
+
+        //    //transform.rotation = Quaternion.Euler(transform.rotation.x, Mathf.Clamp(transform.rotation.y, -turnClamp, turnClamp), transform.rotation.z);
+        //}
+
+
+
+        //Debug.Log(transform.rotation.x + ", " + transform.rotation.y + ", " + transform.rotation.z);
+
+
+
+
+
+        //transform.rotation = Quaternion.Euler(transform.rotation.x, Mathf.Clamp(transform.rotation.y, -turnClamp, turnClamp), transform.rotation.z);
+
     }
 
     private void OnTriggerStay(Collider collider)
     {
-        Debug.Log("CCTV RANGE: " + collider.name);
+        //Debug.Log("CCTV RANGE: " + collider.name);
         if (collider.tag == "Player")
         {
             targetVector = (collider.transform.position - transform.position);
@@ -59,7 +90,7 @@ public class Surveillance : MonoBehaviour
                 Physics.Raycast(transform.position, targetVector, out hitObject, 12);
                 if (hitObject.collider != null && hitObject.collider.name == collider.name)
                 {
-                    Debug.Log("Hit: " + hitObject.collider.name);
+                    //Debug.Log("Hit: " + hitObject.collider.name);
                     TargetAcquired();
                 }
                 else
