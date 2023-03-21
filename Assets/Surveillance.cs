@@ -6,25 +6,44 @@ public class Surveillance : MonoBehaviour
 {
     GameObject light;
     Transform target;
+    [SerializeField] float rotateSpeed = 0.01f;
+
+    Vector3 targetVector;
+    Vector3 lookVector;
+    Vector3 startingDirectionVector;
 
     void Start()
     {
         light = transform.GetChild(0).gameObject;
         light.SetActive(false);
+        startingDirectionVector = transform.forward;
     }
 
 
     void Update()
     {
+        LookAtTarget();
+    }
+
+    void TargetAcquired()
+    {
+
+        light.SetActive(true);
+        lookVector = targetVector;
 
     }
+
+    void TargetLost()
+    {
+        light.SetActive(false);
+        lookVector = startingDirectionVector;
+    }
+
+
     void LookAtTarget()
     {
-        //this.transform.LookAt(playerTransform.position);
-        Vector3 lookVector = target.position - transform.position;
-        lookVector.y = transform.position.y;
         Quaternion rotation = Quaternion.LookRotation(lookVector);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 0.01f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotateSpeed);
     }
 
     private void OnTriggerEnter(Collider collider)
@@ -37,25 +56,21 @@ public class Surveillance : MonoBehaviour
         Debug.Log("CCTV RANGE: " + collider.name);
         if (collider.tag == "Player")
         {
-            Vector3 directionVector = (collider.transform.position - transform.position);
-            float targetAngle = Vector3.Angle(transform.forward, directionVector);
-            float dotProduct = Vector3.Dot(transform.forward.normalized, directionVector.normalized);
-            //60° = 0.5 on Dot Product
-            Debug.Log("CCTV to Player. Angle: " + targetAngle + " | Dot Product: " + dotProduct);
+            targetVector = (collider.transform.position - transform.position);
+            float targetAngle = Vector3.Angle(transform.forward, targetVector);
 
             if (targetAngle <= 60)
             {
-                Debug.Log("CCTV FOV: ");
                 RaycastHit hitObject;
-                Physics.Raycast(transform.position, directionVector, out hitObject, 12);
+                Physics.Raycast(transform.position, targetVector, out hitObject, 12);
                 if (hitObject.collider != null && hitObject.collider.name == collider.name)
                 {
                     Debug.Log("Hit: " + hitObject.collider.name);
-                    light.SetActive(true);
+                    TargetAcquired();
                 }
                 else
                 {
-                    light.SetActive(false);
+                    TargetLost();
                 }
             }
         }
@@ -63,7 +78,6 @@ public class Surveillance : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        light.SetActive(false);
-        target = null;
+        TargetLost();
     }
 }
