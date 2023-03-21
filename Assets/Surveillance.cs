@@ -18,8 +18,9 @@ public class Surveillance : MonoBehaviour
     {
         lens = transform.GetChild(0).gameObject;
         light = lens.transform.GetChild(0).gameObject;
-        light.SetActive(false);
         startingDirectionVector = transform.forward;
+
+        TargetLost();
     }
 
 
@@ -45,35 +46,8 @@ public class Surveillance : MonoBehaviour
 
     void LookAtTarget()
     {
-        //Quaternion rotation = Quaternion.LookRotation(lookVector);
-        //transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotateSpeed);
-
-        float lookAngle = Vector3.SignedAngle(startingDirectionVector, targetVector, Vector3.up);
-
-        //lens.transform.RotateAround(Vector3.up, lookAngle);
-        //lens.transform = Quaternion.Euler(lens.transform.rotation.x, lookVector.y, lens.transform.rotation.z);
-
-
-        //float looktAngle = Vector3.Angle(startingDirectionVector, lookVector);
-
-        //Debug.Log("!!! " + looktAngle);
-
-        //if (looktAngle < -turnClamp || looktAngle > turnClamp)
-        //{
-
-        //    //transform.rotation = Quaternion.Euler(transform.rotation.x, Mathf.Clamp(transform.rotation.y, -turnClamp, turnClamp), transform.rotation.z);
-        //}
-
-
-
-        //Debug.Log(transform.rotation.x + ", " + transform.rotation.y + ", " + transform.rotation.z);
-
-
-
-
-
-        //transform.rotation = Quaternion.Euler(transform.rotation.x, Mathf.Clamp(transform.rotation.y, -turnClamp, turnClamp), transform.rotation.z);
-
+        Quaternion rotation = Quaternion.LookRotation(lookVector);
+        lens.transform.rotation = Quaternion.Slerp(lens.transform.rotation, rotation, rotateSpeed);
     }
 
     private void OnTriggerStay(Collider collider)
@@ -97,6 +71,10 @@ public class Surveillance : MonoBehaviour
                 {
                     TargetLost();
                 }
+            }
+            else
+            {
+                TargetLost();
             }
         }
     }
