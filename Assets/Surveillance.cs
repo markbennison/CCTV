@@ -7,7 +7,7 @@ public class Surveillance : MonoBehaviour
 {
     GameObject lens;
     GameObject light;
-    [SerializeField] float rotateSpeed = 0.001f;
+    [SerializeField] float rotateSpeed = 0.005f;
     [SerializeField] float turnClamp = 90f;
 
     Vector3 targetVector;
@@ -18,7 +18,6 @@ public class Surveillance : MonoBehaviour
     {
         lens = transform.GetChild(0).gameObject;
         light = lens.transform.GetChild(0).gameObject;
-        startingDirectionVector = transform.forward;
 
         TargetLost();
     }
@@ -40,7 +39,7 @@ public class Surveillance : MonoBehaviour
     void TargetLost()
     {
         light.SetActive(false);
-        lookVector = startingDirectionVector;
+        lookVector = transform.forward;
     }
 
 
