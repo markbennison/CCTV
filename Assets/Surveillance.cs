@@ -5,8 +5,7 @@ using UnityEngine;
 public class Surveillance : MonoBehaviour
 {
     GameObject light;
-    Transform target;
-    [SerializeField] float rotateSpeed = 0.01f;
+    [SerializeField] float rotateSpeed = 0.001f;
 
     Vector3 targetVector;
     Vector3 lookVector;
@@ -44,11 +43,6 @@ public class Surveillance : MonoBehaviour
     {
         Quaternion rotation = Quaternion.LookRotation(lookVector);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotateSpeed);
-    }
-
-    private void OnTriggerEnter(Collider collider)
-    {
-        target = collider.transform;
     }
 
     private void OnTriggerStay(Collider collider)
